@@ -9,7 +9,6 @@ type tabBarProps = {
 const TabBar: FC<tabBarProps> = ({ activeTab, changeActiveTab }) => {
   const handleTabClick = (tab: string) => {
     changeActiveTab(tab);
-    console.log(tab);
   };
 
   return (

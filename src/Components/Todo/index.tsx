@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC, ChangeEvent } from "react";
+import { useState, useEffect, FC, ChangeEvent } from "react";
 
 import { v4 as uuidv4 } from "uuid";
 
@@ -27,7 +27,7 @@ const Todo: FC = () => {
   const [task, setTask] = useState<string>("");
   const [tasksList, setTasksList] = useState<Task[]>([]);
   const [activeTab, setActiveTab] = useState<string>("All");
-  const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
 
   useEffect(() => {
     const storedTasks = JSON.parse(
@@ -48,13 +48,10 @@ const Todo: FC = () => {
 
   const onChangeTask = (event: ChangeEvent<HTMLInputElement>) => {
     setTask(event.target.value);
+    setIsButtonDisabled(event.target.value === "");
   };
 
   const onClickAddTask = () => {
-    if (task === "") {
-      setIsButtonDisabled(true);
-      return;
-    }
     const newTask = {
       id: uuidv4(),
       task,
@@ -62,7 +59,7 @@ const Todo: FC = () => {
     };
     setTasksList([...tasksList, newTask]);
     setTask("");
-    setIsButtonDisabled(!isButtonDisabled);
+    setIsButtonDisabled(true);
   };
 
   const deleteTask = (taskId: string) => {
@@ -120,12 +117,12 @@ const Todo: FC = () => {
           value={task}
           onChange={onChangeTask}
         />
-        <Button type="submit" onClick={onClickAddTask}>
+        <Button type="submit" onClick={onClickAddTask} disabled={isButtonDisabled}>
           Add
         </Button>
         <TabBar activeTab={activeTab} changeActiveTab={setActiveTab} />
         {renderTodoList()}
-        <Button onClick={handleOnClickSave} disabled={isButtonDisabled}>
+        <Button onClick={handleOnClickSave}>
           Save
         </Button>
       </CreateTaskContainer>
