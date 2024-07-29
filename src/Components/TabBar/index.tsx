@@ -12,7 +12,7 @@ const TabBar: FC<tabBarProps> = ({ activeTab, changeActiveTab }) => {
   };
 
   return (
-    <TabBarContainer>
+    <TabBarContainer role="tabsList">
       <TodoItem>
         <TodoItemButton type="button" onClick={() => handleTabClick("all")}>
           All Todos

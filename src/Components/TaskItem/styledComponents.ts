@@ -33,11 +33,9 @@ export const LabelContainer = styled.div`
   border-radius: 4px;
 `;
 
-type CheckboxLabelProps = {
-  isChecked: boolean;
-};
 
-export const CheckboxLabel = styled.label<CheckboxLabelProps>`
+
+export const CheckboxLabel = styled.label`
   font-family: "Roboto";
   font-size: 16px;
   font-weight: 400;
@@ -48,7 +46,7 @@ export const CheckboxLabel = styled.label<CheckboxLabelProps>`
   padding-left: 20px;
   padding-right: 20px;
   border-radius: 5px;
-  ${({ isChecked }) => isChecked && "text-decoration: line-through;"}
+
 `;
 
 export const DeleteIconContainer = styled.div`

@@ -98,6 +98,7 @@ const Todo: FC = () => {
             key={eachTask.id}
             deleteTask={deleteTask}
             toggleTaskCompletion={toggleTaskCompletion}
+            // role="button"
           />
         ))}
       </TasksList>
