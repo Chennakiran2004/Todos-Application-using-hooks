@@ -27,7 +27,9 @@ describe("TaskItem component", () => {
         );
 
         const checkbox = screen.getByLabelText('checkbox');
+        
         expect(checkbox).not.toBeChecked();
+        
         expect(screen.getByText('Test Task')).toHaveStyle('text-decoration: none');
 
         fireEvent.click(checkbox);
@@ -43,6 +45,7 @@ describe("TaskItem component", () => {
         );
 
         expect(screen.getByLabelText('checkbox')).toBeChecked();
+        
         expect(screen.getByText('Test Task')).toHaveStyle('text-decoration: line-through');
     });
 
@@ -56,7 +59,9 @@ describe("TaskItem component", () => {
         );
 
         const deleteButton = screen.getByLabelText('Delete task');
+        
         fireEvent.click(deleteButton);
+        
         expect(mockDeleteTask).toHaveBeenCalledWith('1');
     });
 });
