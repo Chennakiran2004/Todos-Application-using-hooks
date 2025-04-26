@@ -5,6 +5,8 @@ import { v4 as uuidv4 } from "uuid";
 import TaskItem from "../TaskItem";
 
 import TabBar from "../TabBar";
+import { todoStore } from "../../stores/TodoStore";
+import { observer } from "mobx-react-lite";
 
 import {
   AppContainer,
@@ -17,92 +19,13 @@ import {
   TasksList,
 } from "./styledComponents";
 
-type Task = {
-  id: string;
-  task: string;
-  completed: boolean;
-};
-
-const Todo: FC = () => {
-  const [task, setTask] = useState<string>("");
-  const [tasksList, setTasksList] = useState<Task[]>([]);
-  const [activeTab, setActiveTab] = useState<string>("All");
-  const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
-
-  useEffect(() => {
-    const storedTasks = JSON.parse(
-      localStorage.getItem("tasksList") || "null"
-    ) as Task[];
-    if (storedTasks) {
-      setTasksList(storedTasks);
-    }
-  }, []);
-
-  const saveItemToLocalStorage = (tasksList: Task[]) => {
-    localStorage.setItem("tasksList", JSON.stringify(tasksList));
-  };
-
-  const handleOnClickSave = () => {
-    saveItemToLocalStorage(tasksList);
-  };
-
-  const onChangeTask = (event: ChangeEvent<HTMLInputElement>) => {
-    setTask(event.target.value);
-    setIsButtonDisabled(event.target.value === "");
-  };
-
-  const onClickAddTask = () => {
-    const newTask = {
+const Todo: FC = observer(() => {
+  const handleAddTask = () => {
+    todoStore.addTask({
       id: uuidv4(),
-      task,
+      task: todoStore.taskInput,
       completed: false,
-    };
-    setTasksList([...tasksList, newTask]);
-    setTask("");
-    setIsButtonDisabled(true);
-  };
-
-  const deleteTask = (taskId: string) => {
-    const filteredTasks = tasksList.filter((eachTask) => {
-      return eachTask.id !== taskId;
     });
-    setTasksList(filteredTasks);
-  };
-
-  const toggleTaskCompletion = (taskId: string) => {
-    const updatedTasksList = tasksList.map((eachTask) => {
-      if (eachTask.id === taskId) {
-        return {
-          ...eachTask,
-          completed: !eachTask.completed,
-        };
-      }
-      return eachTask;
-    });
-    setTasksList(updatedTasksList);
-  };
-
-  const renderTodoList = () => {
-    let filteredTasks = tasksList;
-
-    if (activeTab === "active") {
-      filteredTasks = tasksList.filter((eachTask) => !eachTask.completed);
-    } else if (activeTab === "completed") {
-      filteredTasks = tasksList.filter((eachTask) => eachTask.completed);
-    }
-    return (
-      <TasksList>
-        {filteredTasks.map((eachTask) => (
-          <TaskItem
-            taskDetails={eachTask}
-            key={eachTask.id}
-            deleteTask={deleteTask}
-            toggleTaskCompletion={toggleTaskCompletion}
-            // role="button"
-          />
-        ))}
-      </TasksList>
-    );
   };
 
   return (
@@ -113,22 +36,26 @@ const Todo: FC = () => {
           Create <Span>Task</Span>
         </CreateTaskHeading>
         <TodoUserInput
-          type="text"
+          type="input"
           placeholder="What needs to be done?"
-          value={task}
-          onChange={onChangeTask}
+          onChange={(event: ChangeEvent<HTMLInputElement>) =>
+            todoStore.setTaskInput(event.target.value)
+          }
+          value={todoStore.taskInput}
         />
-        <Button type="submit" onClick={onClickAddTask} disabled={isButtonDisabled}>
+        <Button type="button" onClick={handleAddTask}>
           Add
         </Button>
-        <TabBar activeTab={activeTab} changeActiveTab={setActiveTab} />
-        {renderTodoList()}
-        <Button onClick={handleOnClickSave}>
-          Save
-        </Button>
+        <TabBar />
+        <TasksList>
+          {todoStore.filteredTasks.map((eachTask) => (
+            <TaskItem key={eachTask.id} task={eachTask} />
+          ))}
+        </TasksList>
+        <Button onClick={() => todoStore.saveToLocalStorage()}>Save</Button>
       </CreateTaskContainer>
     </AppContainer>
   );
-};
+});
 
 export default Todo;

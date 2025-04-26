@@ -1,38 +1,25 @@
 import React, { FC } from "react";
 import { TabBarContainer, TodoItem, TodoItemButton } from "./styledComponents";
+import { observer } from "mobx-react-lite";
+import { todoStore } from "../../stores/TodoStore";
 
-type tabBarProps = {
-  activeTab: string;
-  changeActiveTab: (tab: string) => void;
-};
-
-const TabBar: FC<tabBarProps> = ({ activeTab, changeActiveTab }) => {
-  const handleTabClick = (tab: string) => {
-    changeActiveTab(tab);
-  };
-
+const TabBar: FC = observer(() => {
   return (
     <TabBarContainer role="tabsList">
-      <TodoItem>
-        <TodoItemButton type="button" onClick={() => handleTabClick("all")}>
-          All Todos
-        </TodoItemButton>
-      </TodoItem>
-      <TodoItem>
-        <TodoItemButton type="button" onClick={() => handleTabClick("active")}>
-          Active Todos
-        </TodoItemButton>
-      </TodoItem>
-      <TodoItem>
-        <TodoItemButton
-          type="button"
-          onClick={() => handleTabClick("completed")}
-        >
-          Completed Todos
-        </TodoItemButton>
-      </TodoItem>
+      {["all", "active", "completed"].map((tab) => (
+        <TodoItem key={tab}>
+          <TodoItemButton
+            onClick={() => {
+              todoStore.setActiveTab(tab);
+              console.log("active tab", todoStore.activeTab);
+            }}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)} Todos
+          </TodoItemButton>
+        </TodoItem>
+      ))}
     </TabBarContainer>
   );
-};
+});
 
 export default TabBar;

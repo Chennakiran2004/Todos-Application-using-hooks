@@ -8,53 +8,36 @@ import {
   DeleteIcon,
   DeleteButton,
 } from "./styledComponents";
+import { observer } from "mobx-react-lite";
+import { Task, todoStore } from "../../stores/TodoStore";
 
-type taskItemProps = {
-  taskDetails: {
-    id: string;
-    task: string;
-    completed: boolean;
-  };
-  deleteTask: (id: string) => void;
-  toggleTaskCompletion: (id: string) => void;
+type Props = {
+  task: Task;
 };
 
-const TaskItem: FC<taskItemProps> = ({
-  taskDetails,
-  deleteTask,
-  toggleTaskCompletion,
-}) => {
-  const { id, task, completed } = taskDetails;
-
-  const handleCheckboxChange = () => {
-    toggleTaskCompletion(id);
-  };
-
-  const onClickDeleteTask = () => {
-    deleteTask(id);
-  };
+const TaskItem: FC<Props> = observer(({ task }) => {
   return (
     <TodoItemContainer>
       <CheckboxInput
         type="checkbox"
-        checked={completed}
-        onChange={handleCheckboxChange}
-        aria-label="checkbox"
-        data-testid="12"
-        
+        checked={task.completed}
+        onChange={() => todoStore.toggleTaskCompletion(task.id)}
       />
+
       <LabelContainer>
-        <CheckboxLabel style={{ textDecoration: completed ? 'line-through' : 'none' }}>
-          {task}
+        <CheckboxLabel
+          style={{ textDecoration: task.completed ? "line-through" : "none" }}
+        >
+          {task.task}
         </CheckboxLabel>
         <DeleteIconContainer>
-          <DeleteButton onClick={onClickDeleteTask} aria-label="Delete task">
+          <DeleteButton onClick={() => todoStore.deleteTask(task.id)}>
             <DeleteIcon src="https://assets.ccbp.in/frontend/react-js/money-manager/delete.png" />
           </DeleteButton>
         </DeleteIconContainer>
       </LabelContainer>
     </TodoItemContainer>
   );
-};
+});
 
 export default TaskItem;

@@ -9,7 +9,7 @@ const App: FC = () => {
   return (
     <div className="App">
       <Todo />
-    </div>
+   </div>
   );
 };
 
